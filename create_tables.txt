@@ -1,0 +1,14 @@
+CREATE TABLE artist (
+	id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+	name VARCHAR(255) UNIQUE NOT NULL,
+	popularity INTEGER,
+	image VARCHAR(255) NOT NULL
+
+);
+
+CREATE TABLE matchup (
+    id VARCHAR(255) PRIMARY KEY NOT NULL,
+    correct INTEGER,
+    incorrect INTEGER
+);
+

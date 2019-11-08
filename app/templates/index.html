@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="container-fluid align-center">
+    <div class="instructions col-lg-10 col-lg-offset-2">
+        <p>
+            Click on the artist you think is currently the most popular on Spotify!
+
+        </p>
+    </div>
+</div>
+
+
+<div class="container-fluid align-center">
+    <div class="row">
+        <div class="thumb col-lg-4 col-lg-offset-2">
+
+            <img src="{{artists['a1'].image}}" class="artistImage" onclick="checkChoice('a1')">
+            <div id="a1_overlay" class="hidden" onclick="checkChoice('a1')"></div>
+
+
+        </div>
+
+
+        <div class="thumb col-lg-4 col-lg-offset-1">
+
+            <img src="{{artists['a2'].image}}" class="artistImage" onclick="checkChoice('a2')">
+            <div id="a2_overlay" class="hidden" onclick="checkChoice('a2')"></div>
+
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-2">
+            <p class="artistName">{{artists['a1'].name}}</p>
+        </div>
+
+        <div class="col-lg-4 col-lg-offset-1">
+            <p class="artistName">{{artists['a2'].name}}</p>
+        </div>
+
+    </div>
+</div>
+
+<div class="container-fluid align-center">
+    <div class="instructions col-lg-6 col-lg-offset-2">
+        <p>
+            {{matchup_text}}
+        </p>
+    </div>
+</div>
+
+<script>
+
+
+    function applyOverlay(choice, correct) {
+
+        if (correct) {
+            var color = "green"
+        }
+        else {
+            color = "red"
+        }
+
+        var deferred = $.Deferred();
+        $('#' + choice + '_overlay').removeClass("hidden")
+
+        $('#' + choice + '_overlay').css({'background-color': color})
+
+        deferred.resolve();
+
+        return deferred.promise(choice, correct);
+    }
+
+
+    function checkChoice(choice) {
+
+        // Check if the choice was correct
+        var correct = (choice == "{{correct}}");
+
+
+        $.ajax({
+
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            url: "{{  url_for ('update_scores')}}",
+            traditional: "true",
+            data: JSON.stringify({a1: "{{artists['a1'].id}}", a2: "{{artists['a2'].id}}", correct: correct}),
+            dataType: "json",
+        });
+
+
+        applyOverlay(choice, correct).then(function () {
+
+            console.log('choice is');
+
+            console.log(choice);
+
+
+            if ("{{correct}}" == "a1") {
+
+                var correct_name = "{{artists['a1'].name}}";
+                var incorrect_name = "{{artists['a2'].name}}"
+
+            }
+
+            else {
+
+                correct_name = "{{artists['a2'].name}}";
+                incorrect_name = "{{artists['a1'].name}}"
+
+            }
+
+            var correctString = correct_name + ' is more popular than ' + incorrect_name
+
+
+            if (correct) {
+
+                alert('Correct! ' + correctString);
+
+
+                location.href = Flask.url_for('index', {});
+
+            }
+
+            else {
+
+                alert('Incorrect! ' + correctString);
+                location.href = Flask.url_for('index', {});
+            }
+
+
+        })
+    }
+
+</script>
+
+
+{% endblock %}
