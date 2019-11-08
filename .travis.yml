@@ -7,8 +7,4 @@ install:
 
 # Command to run tests
 script:
-  - pytest --cov-report term --cov=app/
-
-# After success, send the coverage report to Coveralls 
-after_success:
-  - coveralls
+  - pytest
